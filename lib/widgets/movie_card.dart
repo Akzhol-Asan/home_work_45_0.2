@@ -46,37 +46,7 @@ class MovieCard extends StatelessWidget {
             padding: EdgeInsets.all(8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Title: $title'),
-                if (isMovieCardOpen) SizedBox(height: 10),
-                Text('Category: $category'),
-                if (isMovieCardOpen) ...[
-                  SizedBox(height: 10),
-                  Text('Year: $year'),
-                  SizedBox(height: 10),
-                  Text('Description: $description'),
-                  SizedBox(height: 10),
-                  Text('Rating: $rating'),
-                  SizedBox(height: 10),
-
-                  if (button != null)
-                    button!
-                  else if (buttonText != null)
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () {},
-                        label: Text('$buttonText'),
-                        icon: Icon(Icons.add),
-                      ),
-                    ),
-                ],
-              ],
+              children: [Text('Title: $title'), Text('Category: $category')],
             ),
           ),
         ],
