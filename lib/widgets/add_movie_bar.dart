@@ -77,6 +77,5 @@ class _AddMovieBarState extends State<AddMovieBar> {
         ],
       ),
     );
-    ;
   }
 }

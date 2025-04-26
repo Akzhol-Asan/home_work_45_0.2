@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:home_work_45_test/screens/single_movie_screen.dart';
+import 'package:home_work_45_test/screens/watched_movies_screen.dart';
 import 'package:home_work_45_test/widgets/add_movie_bar.dart';
 import 'package:home_work_45_test/widgets/movie_card.dart';
 import '../widgets/app_bar_button.dart';
@@ -20,7 +21,6 @@ class _MainScreenState extends State<MainScreen> {
       category: 'Category 1',
       year: '2020',
       description: 'A great movie!',
-      rating: 5,
       buttonText: 'Watch this movie',
       isMovieCardOpen: false,
     ),
@@ -31,7 +31,6 @@ class _MainScreenState extends State<MainScreen> {
       category: 'Category 2',
       year: '2020',
       description: 'A great movie!',
-      rating: 5,
       buttonText: 'Watch this movie',
       isMovieCardOpen: false,
     ),
@@ -42,7 +41,6 @@ class _MainScreenState extends State<MainScreen> {
       category: 'Category 3',
       year: '2020',
       description: 'A great movie!',
-      rating: 5,
       buttonText: 'Watch this movie',
       isMovieCardOpen: false,
     ),
@@ -53,13 +51,13 @@ class _MainScreenState extends State<MainScreen> {
       category: 'Category 4',
       year: '2020',
       description: 'A great movie!',
-      rating: 5,
       buttonText: 'Watch this movie',
       isMovieCardOpen: false,
     ),
   ];
 
-  void onMoveCardTap(MovieCard movieCard) {
+  void onMoveCardTap(int index) {
+    final movieCard = movieCards[index];
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -73,6 +71,11 @@ class _MainScreenState extends State<MainScreen> {
               rating: movieCard.rating,
               buttonText: movieCard.buttonText,
               isMovieCardOpen: movieCard.isMovieCardOpen,
+              onSave: () {
+                setState(() {
+                  movieCards.removeAt(index);
+                });
+              },
             ),
       ),
     );
@@ -107,6 +110,13 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  void openWatchedMovies() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (ctx) => WatchedMoviesScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,7 +128,10 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(color: Colors.white),
               onTap: () {},
             ),
-            AppBarButton(buttonText: 'Watched Movies', onTap: () {}),
+            AppBarButton(
+              buttonText: 'Watched Movies',
+              onTap: openWatchedMovies,
+            ),
             Spacer(),
             IconButton(onPressed: addNewMovie, icon: Icon(Icons.add)),
           ],
@@ -126,22 +139,37 @@ class _MainScreenState extends State<MainScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.only(top: 10),
-        child: GridView.builder(
-          padding: EdgeInsets.all(8),
-          itemCount: movieCards.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 5,
-            mainAxisExtent: 320,
-          ),
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () => onMoveCardTap(movieCards[index]),
-              child: movieCards[index],
-            );
-          },
-        ),
+        child:
+            movieCards.isEmpty
+                ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('You do not have new movies'),
+                      TextButton.icon(
+                        onPressed: addNewMovie,
+                        label: Text('Add new movie'),
+                        icon: Icon(Icons.add),
+                      ),
+                    ],
+                  ),
+                )
+                : GridView.builder(
+                  padding: EdgeInsets.all(8),
+                  itemCount: movieCards.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    mainAxisExtent: 320,
+                  ),
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () => onMoveCardTap(index),
+                      child: movieCards[index],
+                    );
+                  },
+                ),
       ),
     );
   }
