@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:home_work_45_test/screens/main_screen.dart';
+import 'package:home_work_45_test/theme/light_theme.dart';
 
 class MoviesApp extends StatefulWidget {
   const MoviesApp({super.key});
@@ -10,6 +12,6 @@ class MoviesApp extends StatefulWidget {
 class _MoviesAppState extends State<MoviesApp> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return MaterialApp(theme: lightTheme, home: MainScreen());
   }
 }
