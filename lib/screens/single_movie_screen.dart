@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:home_work_45_test/data/watched_movie_cards.dart';
+import 'package:home_work_45_test/screens/main_screen.dart';
 import 'package:home_work_45_test/widgets/movie_card.dart';
+
+import '../data/new_movies_cards.dart';
 
 class SingleMovieScreen extends StatefulWidget {
   final String image;
@@ -12,6 +15,7 @@ class SingleMovieScreen extends StatefulWidget {
   final String? buttonText;
   final bool isMovieCardOpen;
   final VoidCallback onSave;
+  final bool isMovieNew;
 
   const SingleMovieScreen({
     super.key,
@@ -24,6 +28,7 @@ class SingleMovieScreen extends StatefulWidget {
     this.buttonText,
     required this.isMovieCardOpen,
     required this.onSave,
+    required this.isMovieNew,
   });
 
   @override
@@ -46,48 +51,71 @@ class _SingleMovieScreenState extends State<SingleMovieScreen> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setStateDialog) {
             return AlertDialog(
-              title: Text('Rate this movie'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('Select a rating (0 to 5):'),
-                  Slider(
-                    value: _rating?.toDouble() ?? 0.0,
-                    min: 0,
-                    max: 5,
-                    divisions: 5,
-                    onChanged: (double newValue) {
-                      setStateDialog(() {
-                        _rating = newValue.toInt();
-                      });
-                    },
-                  ),
-                  Text('Rating: $_rating'),
-                ],
-              ),
+              title: widget.isMovieNew ? Text('Rate this movie') : null,
+              content:
+                  widget.isMovieNew
+                      ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Select a rating (0 to 5):'),
+                          Slider(
+                            value: _rating?.toDouble() ?? 0.0,
+                            min: 0,
+                            max: 5,
+                            divisions: 5,
+                            onChanged: (double newValue) {
+                              setStateDialog(() {
+                                _rating = newValue.toInt();
+                              });
+                            },
+                          ),
+                          Text('Rating: $_rating'),
+                        ],
+                      )
+                      : Text('Are you sure?'),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Cancel'),
+                  child: Text(widget.isMovieNew ? 'Cansel' : 'No'),
                 ),
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      watchedMovieCards.add(
-                        MovieCard(
-                          image: widget.image,
-                          title: widget.title,
-                          category: widget.category,
-                          rating: _rating ?? 0,
-                        ),
-                      );
+                      if (widget.isMovieNew) {
+                        watchedMovieCards.add(
+                          MovieCard(
+                            image: widget.image,
+                            title: widget.title,
+                            year: widget.year,
+                            category: widget.category,
+                            description: widget.description,
+                            rating: _rating ?? 0,
+                          ),
+                        );
+                      } else {
+                        movieCards.add(
+                          MovieCard(
+                            image: widget.image,
+                            title: widget.title,
+                            year: widget.year,
+                            category: widget.category,
+                            description: widget.description,
+                            rating: null,
+                            buttonText: widget.buttonText,
+                            isMovieCardOpen: widget.isMovieCardOpen,
+                          ),
+                        );
+                      }
                       widget.onSave();
                     });
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (ctx) => MainScreen()),
+                    );
                   },
-                  child: Text('Save'),
+                  child: Text(widget.isMovieNew ? 'Save' : 'Yes'),
                 ),
               ],
             );
@@ -125,9 +153,18 @@ class _SingleMovieScreenState extends State<SingleMovieScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: _showRatingDialog,
-                icon: Icon(Icons.play_arrow),
-                label: Text(widget.buttonText ?? 'Watch this movie'),
+                onPressed: () {
+                  _showRatingDialog();
+                },
+
+                icon:
+                    widget.isMovieNew
+                        ? Icon(Icons.play_arrow)
+                        : Icon(Icons.backspace_outlined),
+                label:
+                    widget.isMovieNew
+                        ? Text(widget.buttonText ?? 'Watch this movie')
+                        : Text(widget.buttonText ?? 'Return movie'),
               ),
             ),
           ],
